@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Lounge Palmanova - Menú Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        :root {
+            --cream: #faf8f5;
+            --cream-dark: #f5f2ed;
+            --black: #1a1a1a;
+            --black-light: #2d2d2d;
+            --shadow: rgba(26, 26, 26, 0.08);
+            --shadow-hover: rgba(26, 26, 26, 0.12);
+        }
+        
+        body { 
+            background: var(--cream);
+            color: var(--black);
+            line-height: 1.6;
+        }
+        
+        /* Card Shadows */
+        .card-shadow {
+            background: white;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 8px 30px var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+        
+        .card-shadow-lg {
+            background: white;
+            box-shadow: 0 8px 40px var(--shadow);
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            position: relative;
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            min-width: 180px;
+            background: white;
+            border-radius: 12px;
+            padding: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+        
+        .language-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .language-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .language-option:hover {
+            background: var(--cream);
+        }
+        
+        .language-option.active {
+            background: var(--black);
+            color: white;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: var(--black);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            background: var(--black-light);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--black);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e5e5e5;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--cream);
+            transform: translateY(-1px);
+        }
+        
+        /* Category Chips */
+        .chip {
+            background: white;
+            color: var(--black);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e5e5e5;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .chip:hover {
+            background: var(--cream);
+            transform: translateY(-1px);
+        }
+        
+        .chip.active {
+            background: var(--black);
+            color: white;
+            border-color: var(--black);
+        }
+        
+        /* Search */
+        .search-input {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--black);
+            box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+        }
+        
+        /* Price */
+        .price {
+            font-weight: 700;
+            color: var(--black);
+            font-size: 18px;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-popular { 
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .badge-new { 
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .badge-premium { 
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+        .badge-signature { 
+            background: #ecfdf5;
+            color: #059669;
+        }
+        .badge-offer { 
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        /* Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+        
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Loading */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e5e5e5;
+            border-top: 3px solid var(--black);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Highlight */
+        mark {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--cream);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-black rounded-lg flex items-center justify-center overflow-hidden">
+                        <img src="https://res.cloudinary.com/dxhef6dju/image/upload/v1756248161/ChatGPT_Image_Aug_27_2025_at_12_42_26_AM_hr8zay.png" alt="My Lounge Palmanova" class="w-full h-full object-contain" onerror="this.src=''; this.alt='Logo failed to load'; this.style.display='none';">
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-black">My Lounge Palmanova</h1>
+                        <p id="digitalExperience" class="text-sm text-gray-500">Experiencia Digital</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <!-- Language Selector -->
+                    <div class="language-selector">
+                        <button id="languageBtn" class="btn-secondary flex items-center gap-2">
+                            <span id="currentFlag" class="text-lg">🇪🇸</span>
+                            <span id="currentLang" class="hidden md:inline">Español</span>
+                            <span class="text-xs">▼</span>
+                        </button>
+                        <div id="languageDropdown" class="language-dropdown">
+                            <div class="language-option active" data-lang="es">
+                                <span class="text-lg">🇪🇸</span>
+                                <span>Español</span>
+                            </div>
+                            <div class="language-option" data-lang="en">
+                                <span class="text-lg">🇬🇧</span>
+                                <span>English</span>
+                            </div>
+                            <div class="language-option" data-lang="fr">
+                                <span class="text-lg">🇫🇷</span>
+                                <span>Français</span>
+                            </div>
+                            <div class="language-option" data-lang="it">
+                                <span class="text-lg">🇮🇹</span>
+                                <span>Italiano</span>
+                            </div>
+                            <div class="language-option" data-lang="de">
+                                <span class="text-lg">🇩🇪</span>
+                                <span>Deutsch</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="refreshBtn" class="btn-secondary flex items-center gap-2">
+                        <span id="refreshIcon" class="text-lg transition-transform duration-500">🔄</span>
+                        <span id="refreshText" class="hidden md:inline">Actualizar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-16 bg-gradient-to-b from-white to-cream">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 id="heroTitle" class="text-5xl md:text-6xl font-bold text-black mb-6 leading-tight">
+                Menú Premium
+            </h2>
+            <p id="heroSubtitle" class="text-xl text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
+                Sumérgete en una experiencia gastronómica única con nuestra selección exclusiva
+            </p>
+
+            <!-- Search & Filters -->
+            <div class="max-w-4xl mx-auto space-y-8">
+                <!-- Search Bar -->
+                <div class="card-shadow rounded-xl p-1">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Buscar en el menú..." 
+                            class="search-input"
+                        >
+                        <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            🔍
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Chips -->
+                <div id="categoryChips" class="flex flex-wrap justify-center gap-3">
+                    <!-- Chips will be populated by JavaScript -->
+                </div>
+
+                <!-- Stats -->
+                <div class="card-shadow rounded-xl p-6">
+                    <div class="flex justify-center items-center gap-8 text-center">
+                        <div>
+                            <div id="totalItems" class="text-2xl font-bold text-black">Cargando...</div>
+                            <div id="productsLabel" class="text-sm text-gray-500 uppercase tracking-wide">Productos</div>
+                        </div>
+                        <div class="w-px h-8 bg-gray-200"></div>
+                        <div>
+                            <div id="qualityValue" class="text-2xl font-bold text-black">Premium</div>
+                            <div id="qualityLabel" class="text-sm text-gray-500 uppercase tracking-wide">Calidad</div>
+                        </div>
+                        <div class="w-px h-8 bg-gray-200"></div>
+                        <div>
+                            <div id="statusValue" class="text-2xl font-bold text-black">Live</div>
+                            <div id="statusLabel" class="text-sm text-gray-500 uppercase tracking-wide">Estado</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Content -->
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-20">
+            <div class="loading-spinner mx-auto mb-6"></div>
+            <h3 id="loadingTitle" class="text-2xl font-bold text-black mb-4">Cargando menú...</h3>
+            <p id="loadingSubtitle" class="text-gray-600">Preparando tu experiencia gastronómica</p>
+        </div>
+
+        <!-- Menu Grid -->
+        <div id="menuContainer" class="hidden">
+            <div id="menuGrid" class="menu-grid">
+                <!-- Menu sections will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="hidden text-center py-20">
+            <div class="text-6xl mb-6">🔍</div>
+            <h3 id="noResultsTitle" class="text-2xl font-bold text-black mb-4">Sin resultados</h3>
+            <p id="noResultsSubtitle" class="text-gray-600 mb-8">Intenta con otros términos de búsqueda</p>
+            <button id="exploreAllBtn" onclick="clearSearch()" class="btn-primary">
+                Explorar Todo
+            </button>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="hidden text-center py-20">
+            <div class="text-6xl mb-6">⚠️</div>
+            <h3 id="errorTitle" class="text-2xl font-bold text-black mb-4">Error de conexión</h3>
+            <p id="errorSubtitle" class="text-gray-600 mb-8">No se pudo cargar el menú</p>
+            <button id="reconnectBtn" onclick="loadMenu(true)" class="btn-primary">
+                Reintentar
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="flex justify-center items-center gap-4 mb-6">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden">
+                    <img src="https://res.cloudinary.com/dxhef6dju/image/upload/v1756248161/ChatGPT_Image_Aug_27_2025_at_12_42_26_AM_hr8zay.png" alt="My Lounge Palmanova" class="w-full h-full object-contain" onerror="this.src=''; this.alt='Logo failed to load'; this.style.display='none';">
+                </div>
+                <span class="text-xl font-bold">My Lounge Palmanova</span>
+            </div>
+            <p id="footerTagline" class="text-gray-300 mb-6">Donde cada momento se transforma en una experiencia inolvidable</p>
+            <div class="flex justify-center items-center gap-6 text-sm text-gray-400">
+                <span>© 2025 My Lounge Palmanova</span>
+                <div class="w-px h-4 bg-gray-600"></div>
+                <span id="digitalMenuText">Menú Digital</span>
+                <div class="w-px h-4 bg-gray-600"></div>
+                <span id="realTimeText">Tiempo Real</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Multilingual System
+        const translations = {
+            es: {
+                digitalExperience: "Experiencia Digital",
+                refresh: "Actualizar",
+                heroTitle: "Menú Premium",
+                heroSubtitle: "Sumérgete en una experiencia gastronómica única con nuestra selección exclusiva",
+                searchPlaceholder: "Buscar en el menú...",
+                products: "Productos",
+                quality: "Calidad",
+                qualityValue: "Premium",
+                status: "Estado",
+                statusValue: "Live",
+                loading: "Cargando...",
+                loadingTitle: "Cargando menú...",
+                loadingSubtitle: "Preparando tu experiencia gastronómica",
+                noResultsTitle: "Sin resultados",
+                noResultsSubtitle: "Intenta con otros términos de búsqueda",
+                exploreAll: "Explorar Todo",
+                errorTitle: "Error de conexión",
+                errorSubtitle: "No se pudo cargar el menú",
+                reconnect: "Reintentar",
+                footerTagline: "Donde cada momento se transforma en una experiencia inolvidable",
+                digitalMenu: "Menú Digital",
+                realTime: "Tiempo Real",
+                all: "Todo",
+                popular: "Popular",
+                new: "Nuevo",
+                premium: "Premium",
+                signature: "Signature",
+                offer: "Oferta"
+            },
+            en: {
+                digitalExperience: "Digital Experience",
+                refresh: "Refresh",
+                heroTitle: "Premium Menu",
+                heroSubtitle: "Immerse yourself in a unique gastronomic experience with our exclusive selection",
+                searchPlaceholder: "Search menu...",
+                products: "Products",
+                quality: "Quality",
+                qualityValue: "Premium",
+                status: "Status",
+                statusValue: "Live",
+                loading: "Loading...",
+                loadingTitle: "Loading menu...",
+                loadingSubtitle: "Preparing your gastronomic experience",
+                noResultsTitle: "No results",
+                noResultsSubtitle: "Try other search terms",
+                exploreAll: "Explore All",
+                errorTitle: "Connection error",
+                errorSubtitle: "Could not load menu",
+                reconnect: "Retry",
+                footerTagline: "Where every moment transforms into an unforgettable experience",
+                digitalMenu: "Digital Menu",
+                realTime: "Real Time",
+                all: "All",
+                popular: "Popular",
+                new: "New",
+                premium: "Premium",
+                signature: "Signature",
+                offer: "Offer"
+            },
+            fr: {
+                digitalExperience: "Expérience Numérique",
+                refresh: "Actualiser",
+                heroTitle: "Menu Premium",
+                heroSubtitle: "Plongez dans une expérience gastronomique unique avec notre sélection exclusive",
+                searchPlaceholder: "Rechercher dans le menu...",
+                products: "Produits",
+                quality: "Qualité",
+                qualityValue: "Premium",
+                status: "Statut",
+                statusValue: "Live",
+                loading: "Chargement...",
+                loadingTitle: "Chargement du menu...",
+                loadingSubtitle: "Préparation de votre expérience gastronomique",
+                noResultsTitle: "Aucun résultat",
+                noResultsSubtitle: "Essayez d'autres termes de recherche",
+                exploreAll: "Explorer Tout",
+                errorTitle: "Erreur de connexion",
+                errorSubtitle: "Impossible de charger le menu",
+                reconnect: "Réessayer",
+                footerTagline: "Où chaque moment se transforme en une expérience inoubliable",
+                digitalMenu: "Menu Numérique",
+                realTime: "Temps Réel",
+                all: "Tout",
+                popular: "Populaire",
+                new: "Nouveau",
+                premium: "Premium",
+                signature: "Signature",
+                offer: "Offre"
+            },
+            it: {
+                digitalExperience: "Esperienza Digitale",
+                refresh: "Aggiorna",
+                heroTitle: "Menu Premium",
+                heroSubtitle: "Immergiti in un'esperienza gastronomica unica con la nostra selezione esclusiva",
+                searchPlaceholder: "Cerca nel menu...",
+                products: "Prodotti",
+                quality: "Qualità",
+                qualityValue: "Premium",
+                status: "Stato",
+                statusValue: "Live",
+                loading: "Caricamento...",
+                loadingTitle: "Caricamento menu...",
+                loadingSubtitle: "Preparando la tua esperienza gastronomica",
+                noResultsTitle: "Nessun risultato",
+                noResultsSubtitle: "Prova altri termini di ricerca",
+                exploreAll: "Esplora Tutto",
+                errorTitle: "Errore di connessione",
+                errorSubtitle: "Impossibile caricare il menu",
+                reconnect: "Riprova",
+                footerTagline: "Dove ogni momento si trasforma in un'esperienza indimenticabile",
+                digitalMenu: "Menu Digitale",
+                realTime: "Tempo Reale",
+                all: "Tutto",
+                popular: "Popolare",
+                new: "Nuovo",
+                premium: "Premium",
+                signature: "Signature",
+                offer: "Offerta"
+            },
+            de: {
+                digitalExperience: "Digitale Erfahrung",
+                refresh: "Aktualisieren",
+                heroTitle: "Premium Menü",
+                heroSubtitle: "Tauchen Sie ein in ein einzigartiges gastronomisches Erlebnis mit unserer exklusiven Auswahl",
+                searchPlaceholder: "Im Menü suchen...",
+                products: "Produkte",
+                quality: "Qualität",
+                qualityValue: "Premium",
+                status: "Status",
+                statusValue: "Live",
+                loading: "Laden...",
+                loadingTitle: "Menü wird geladen...",
+                loadingSubtitle: "Ihr gastronomisches Erlebnis wird vorbereitet",
+                noResultsTitle: "Keine Ergebnisse",
+                noResultsSubtitle: "Versuchen Sie andere Suchbegriffe",
+                exploreAll: "Alles Erkunden",
+                errorTitle: "Verbindungsfehler",
+                errorSubtitle: "Menü konnte nicht geladen werden",
+                reconnect: "Erneut Versuchen",
+                footerTagline: "Wo jeder Moment zu einem unvergesslichen Erlebnis wird",
+                digitalMenu: "Digitales Menü",
+                realTime: "Echtzeit",
+                all: "Alle",
+                popular: "Beliebt",
+                new: "Neu",
+                premium: "Premium",
+                signature: "Signature",
+                offer: "Angebot"
+            }
+        };
+
+        const languageConfig = {
+            es: { flag: "🇪🇸", name: "Español" },
+            en: { flag: "🇬🇧", name: "English" },
+            fr: { flag: "🇫🇷", name: "Français" },
+            it: { flag: "🇮🇹", name: "Italiano" },
+            de: { flag: "🇩🇪", name: "Deutsch" }
+        };
+
+        // Menu Data
+        const menuData = {
+            es: [
+                {
+                    name: "Shisha Premium",
+                    description: "Colección exclusiva de sabores premium",
+                    icon: "🪬",
+                    items: [
+                        { 
+                            name: "Adalya Love 66 Supreme", 
+                            detail: "Mezcla exótica de frutas tropicales con menta glacial", 
+                            price: "38", 
+                            popular: true,
+                            tags: ["frutal", "tropical", "menta"]
+                        },
+                        { 
+                            name: "Starbuzz Blue Mist Deluxe", 
+                            detail: "Arándanos silvestres premium con menta ártica", 
+                            price: "42", 
+                            new: true,
+                            tags: ["arándanos", "refrescante"]
+                        },
+                        { 
+                            name: "Al Fakher Double Apple Royal", 
+                            detail: "El legendario sabor a manzana doble refinado", 
+                            price: "32",
+                            tags: ["clásico", "manzana"]
+                        },
+                        { 
+                            name: "Frozen Fruit Paradise", 
+                            detail: "Frutas naturales congeladas: sandía, piña, mango", 
+                            price: "48", 
+                            premium: true,
+                            tags: ["natural", "tropical"]
+                        },
+                        { 
+                            name: "Vodka Shisha Platinum", 
+                            detail: "Base de vodka Grey Goose con frutas del bosque", 
+                            price: "55", 
+                            signature: true,
+                            tags: ["vodka", "premium"]
+                        }
+                    ]
+                },
+                {
+                    name: "Cócteles Signature",
+                    description: "Creaciones únicas de nuestros mixólogos",
+                    icon: "🍸",
+                    items: [
+                        { 
+                            name: "My Lounge Signature Platinum", 
+                            detail: "Vodka premium, lichi asiático, lima kaffir, espuma de coco", 
+                            price: "22", 
+                            signature: true,
+                            tags: ["platinum", "exótico"]
+                        },
+                        { 
+                            name: "Neon Dreams Electric", 
+                            detail: "Ginebra Hendrick's, tónica premium, pepino orgánico", 
+                            price: "19", 
+                            popular: true,
+                            tags: ["gin", "refrescante"]
+                        },
+                        { 
+                            name: "Palmanova Sunset", 
+                            detail: "Tequila reposado, mango de Manila, chile piquín", 
+                            price: "20",
+                            tags: ["tequila", "picante"]
+                        },
+                        { 
+                            name: "Purple Rain Mystique", 
+                            detail: "Vodka cristalino, licor de violeta, arándanos frescos", 
+                            price: "18", 
+                            new: true,
+                            tags: ["vodka", "frutal"]
+                        }
+                    ]
+                },
+                {
+                    name: "Gastronomía Gourmet",
+                    description: "Creaciones culinarias del chef",
+                    icon: "🍔",
+                    items: [
+                        { 
+                            name: "Tabla de Quesos Artesanales", 
+                            detail: "Cinco quesos europeos con frutos secos y miel de lavanda", 
+                            price: "28", 
+                            popular: true,
+                            tags: ["quesos", "artesanal"]
+                        },
+                        { 
+                            name: "Nachos My Lounge", 
+                            detail: "Nachos caseros con guacamole fresco y queso fundido", 
+                            price: "19",
+                            tags: ["mexicano", "compartir"]
+                        },
+                        { 
+                            name: "Alitas BBQ Glazed", 
+                            detail: "Ocho alitas marinadas con salsa BBQ casera", 
+                            price: "17",
+                            tags: ["pollo", "bbq"]
+                        },
+                        { 
+                            name: "Ceviche del Día", 
+                            detail: "Pescado fresco marinado en lima con cebolla morada", 
+                            price: "22", 
+                            signature: true,
+                            tags: ["pescado", "fresco"]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Global state
+        let currentLanguage = 'es';
+        let currentData = null;
+        let filteredData = null;
+        let activeCategory = 'all';
+        let searchTerm = '';
+
+        // DOM elements
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+        const noResults = document.getElementById('noResults');
+        const menuContainer = document.getElementById('menuContainer');
+        const searchInput = document.getElementById('searchInput');
+        const categoryChips = document.getElementById('categoryChips');
+        const totalItems = document.getElementById('totalItems');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const refreshIcon = document.getElementById('refreshIcon');
+
+        // Utility functions
+        function formatPrice(price) {
+            return `${price} €`;
+        }
+
+        function highlightText(text, searchTerm) {
+            if (!searchTerm) return text;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<mark>$1</mark>');
+        }
+
+        function getBadgeText(type) {
+            const t = translations[currentLanguage];
+            return t[type] || type;
+        }
+
+        function getItemBadge(item) {
+            if (item.signature) return `<span class="badge badge-signature">✨ ${getBadgeText('signature')}</span>`;
+            if (item.premium) return `<span class="badge badge-premium">👑 ${getBadgeText('premium')}</span>`;
+            if (item.popular) return `<span class="badge badge-popular">🔥 ${getBadgeText('popular')}</span>`;
+            if (item.new) return `<span class="badge badge-new">⭐ ${getBadgeText('new')}</span>`;
+            if (item.offer) return `<span class="badge badge-offer">💥 ${getBadgeText('offer')}</span>`;
+            return '';
+        }
+
+        // Data loading
+        async function loadMenu(forceRefresh = false) {
+            try {
+                showLoading();
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                currentData = { sections: menuData[currentLanguage] };
+                renderMenu();
+            } catch (error) {
+                console.error('Error loading menu:', error);
+                showError();
+            }
+        }
+
+        // UI rendering
+        function showLoading() {
+            loadingState.classList.remove('hidden');
+            menuContainer.classList.add('hidden');
+            errorState.classList.add('hidden');
+            noResults.classList.add('hidden');
+        }
+
+        function showError() {
+            loadingState.classList.add('hidden');
+            menuContainer.classList.add('hidden');
+            errorState.classList.remove('hidden');
+            noResults.classList.add('hidden');
+        }
+
+        function showContent() {
+            loadingState.classList.add('hidden');
+            menuContainer.classList.remove('hidden');
+            errorState.classList.add('hidden');
+            noResults.classList.add('hidden');
+        }
+
+        function showNoResults() {
+            loadingState.classList.add('hidden');
+            menuContainer.classList.add('hidden');
+            errorState.classList.add('hidden');
+            noResults.classList.remove('hidden');
+        }
+
+        function renderMenu() {
+            if (!currentData) return;
+            renderCategoryChips();
+            applyFilters();
+            updateStats();
+            showContent();
+        }
+
+        function renderCategoryChips() {
+            const t = translations[currentLanguage];
+            const chips = [
+                { name: t.all, key: 'all', icon: '🌟' },
+                ...currentData.sections.map(s => ({
+                    name: s.name,
+                    key: s.name,
+                    icon: s.icon
+                }))
+            ];
+            
+            categoryChips.innerHTML = chips.map(chip => {
+                const isActive = (chip.key === 'all' && activeCategory === 'all') || 
+                                (chip.key !== 'all' && activeCategory === chip.key);
+                
+                return `
+                    <button 
+                        class="chip ${isActive ? 'active' : ''} flex items-center gap-2"
+                        onclick="filterByCategory('${chip.key}')"
+                    >
+                        <span>${chip.icon}</span>
+                        <span>${chip.name}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function applyFilters() {
+            let sections = currentData.sections;
+            
+            if (activeCategory !== 'all') {
+                sections = sections.filter(section => section.name === activeCategory);
+            }
+            
+            if (searchTerm) {
+                sections = sections.map(section => ({
+                    ...section,
+                    items: section.items.filter(item => 
+                        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        item.detail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        (item.tags && item.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())))
+                    )
+                })).filter(section => section.items.length > 0);
+            }
+            
+            filteredData = { ...currentData, sections };
+            
+            if (filteredData.sections.length === 0) {
+                showNoResults();
+            } else {
+                renderSections();
+                showContent();
+            }
+        }
+
+        function renderSections() {
+            const menuGrid = document.getElementById('menuGrid');
+            
+            menuGrid.innerHTML = filteredData.sections.map((section, sectionIndex) => `
+                <div class="card-shadow rounded-xl p-8 fade-in" style="animation-delay: ${sectionIndex * 0.1}s;">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">${section.icon}</span>
+                            <div>
+                                <h2 class="text-2xl font-bold text-black">${section.name}</h2>
+                                <p class="text-gray-600 text-sm">${section.description}</p>
+                            </div>
+                        </div>
+                        <div class="bg-black text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            ${section.items.length}
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        ${section.items.map(item => `
+                            <div class="border border-gray-100 rounded-lg p-6 hover:shadow-md transition-all duration-300">
+                                <div class="flex justify-between items-start gap-4">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-3 mb-2 flex-wrap">
+                                            <h3 class="font-semibold text-lg text-black">
+                                                ${highlightText(item.name, searchTerm)}
+                                            </h3>
+                                            ${getItemBadge(item)}
+                                        </div>
+                                        <p class="text-gray-600 mb-3 leading-relaxed">
+                                            ${highlightText(item.detail, searchTerm)}
+                                        </p>
+                                        ${item.tags ? `
+                                            <div class="flex flex-wrap gap-2">
+                                                ${item.tags.map(tag => `
+                                                    <span class="px-2 py-1 bg-gray-100 rounded text-xs text-gray-600">
+                                                        ${highlightText(tag, searchTerm)}
+                                                    </span>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="price">
+                                            ${highlightText(formatPrice(item.price), searchTerm)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const t = translations[currentLanguage];
+            const total = currentData.sections.reduce((sum, section) => sum + section.items.length, 0);
+            totalItems.textContent = total;
+        }
+
+        // Filter functions
+        function filterByCategory(category) {
+            activeCategory = category;
+            applyFilters();
+            renderCategoryChips();
+        }
+
+        function filterBySearch(term) {
+            searchTerm = term;
+            applyFilters();
+        }
+
+        function clearSearch() {
+            searchInput.value = '';
+            searchTerm = '';
+            activeCategory = 'all';
+            applyFilters();
+            renderCategoryChips();
+        }
+
+        // Language Functions
+        function updateLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            const config = languageConfig[lang];
+            
+            // Update language selector
+            document.getElementById('currentFlag').textContent = config.flag;
+            document.getElementById('currentLang').textContent = config.name;
+            
+            // Update all text elements
+            document.getElementById('digitalExperience').textContent = t.digitalExperience;
+            document.getElementById('refreshText').textContent = t.refresh;
+            document.getElementById('heroTitle').textContent = t.heroTitle;
+            document.getElementById('heroSubtitle').textContent = t.heroSubtitle;
+            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+            document.getElementById('productsLabel').textContent = t.products;
+            document.getElementById('qualityLabel').textContent = t.quality;
+            document.getElementById('qualityValue').textContent = t.qualityValue;
+            document.getElementById('statusLabel').textContent = t.status;
+            document.getElementById('statusValue').textContent = t.statusValue;
+            document.getElementById('loadingTitle').textContent = t.loadingTitle;
+            document.getElementById('loadingSubtitle').textContent = t.loadingSubtitle;
+            document.getElementById('noResultsTitle').textContent = t.noResultsTitle;
+            document.getElementById('noResultsSubtitle').textContent = t.noResultsSubtitle;
+            document.getElementById('exploreAllBtn').textContent = t.exploreAll;
+            document.getElementById('errorTitle').textContent = t.errorTitle;
+            document.getElementById('errorSubtitle').textContent = t.errorSubtitle;
+            document.getElementById('reconnectBtn').textContent = t.reconnect;
+            document.getElementById('footerTagline').textContent = t.footerTagline;
+            document.getElementById('digitalMenuText').textContent = t.digitalMenu;
+            document.getElementById('realTimeText').textContent = t.realTime;
+            
+            // Update active language option
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.lang === lang) {
+                    option.classList.add('active');
+                }
+            });
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+            
+            // Reload menu with new language
+            currentData = { sections: menuData[currentLanguage] };
+            if (currentData) {
+                renderMenu();
+            }
+            
+            // Close dropdown
+            document.getElementById('languageDropdown').classList.remove('active');
+        }
+
+        // Event listeners
+        refreshBtn.addEventListener('click', () => {
+            refreshIcon.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                refreshIcon.style.transform = 'rotate(0deg)';
+            }, 500);
+            loadMenu(true);
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            filterBySearch(e.target.value);
+        });
+
+        // Language selector events
+        document.getElementById('languageBtn').addEventListener('click', () => {
+            document.getElementById('languageDropdown').classList.toggle('active');
+        });
+
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', () => {
+                updateLanguage(option.dataset.lang);
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.language-selector')) {
+                document.getElementById('languageDropdown').classList.remove('active');
+            }
+        });
+
+        // Initialize
+        updateLanguage('es');
+        loadMenu();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97571d77141e2174',t:'MTc1NjI1MTAwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
